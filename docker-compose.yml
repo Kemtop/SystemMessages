@@ -1,0 +1,27 @@
+version: '3.4'
+
+
+services:
+  rabbit:
+    image: rabbitmq:3-management-alpine
+
+  systema:
+    image: ${DOCKER_REGISTRY-}systema
+    build:
+      context: .
+      dockerfile: SystemA/Dockerfile
+    depends_on:
+      rabbit:
+        condition: service_healthy
+
+  systemb:
+    image: ${DOCKER_REGISTRY-}systemb
+    build:
+      context: .
+      dockerfile: SystemB/Dockerfile
+    depends_on:
+      rabbit:
+        condition: service_healthy
+      systema: 
+        condition: service_started
+       
