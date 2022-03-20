@@ -21,6 +21,11 @@ namespace SystemB
     {
         private readonly ILogger<ReadMessagesService> logger;
         /// <summary>
+        /// Контейнер, эмулирующий результат работы долгого сервиса. Строка содержит входящие сообщения.
+        /// </summary>
+        private readonly ISystemResults results;
+
+        /// <summary>
         /// Интерфейс для работы с клиентом.
         /// </summary>
         private readonly IRabbitMqClient rabbitMqClient;
@@ -35,15 +40,14 @@ namespace SystemB
         /// </summary>
         List<MessageModel> Messages;
 
-        /// <summary>
-        /// Строка, эмулирующая результат работы долгого сервиса. Строка содержит входящие сообщения.
-        /// </summary>
-        public string result;
 
-        public ReadMessagesService(ILogger<ReadMessagesService> _logger, RabbitMqClient rabbitMqClient_)
+        public ReadMessagesService(ILogger<ReadMessagesService> _logger, 
+            RabbitMqClient rabbitMqClient_,
+            ISystemResults results_)
         {
             logger = _logger;
             rabbitMqClient = rabbitMqClient_;
+            results = results_;
             Messages = new List<MessageModel>();
         }
 
@@ -57,10 +61,10 @@ namespace SystemB
             //Настройка таймера эмулирующего долгий процесс.
             timerProcessing = new Timer((Object stateInfo) =>
             {
-                ProcessingWorker();
+                ProcessingWorker(); //Какой то процесс.
             }, null, 1000, 1000);
 
-            //Инициализая клиента для работы с брокиром, подпись на событие нового сообщения.
+            //Инициализация клиента для работы с брокером, подпись на событие нового сообщения.
             rabbitMqClient.Subscribe();
             rabbitMqClient.EventReciveMessage += OnHasNewMassege;
 
@@ -90,13 +94,16 @@ namespace SystemB
 
             if (m == null) return; //Нет результатов.
 
-            //Создаю результат работы медленного процесса.
-            if (result != null && result.Length > 500) result = ""; //Очистка строки, если очень большая.
-
+            //Создаю результат работы медленного процесса.            
             string line = m.Message + " prior=" + m.Prior + "\r\n";
-            result += line;
 
-            m.ItProcessed = true; //Ставлю флаг обработан.
+            lock(results) //Используется в контроллере.
+            {
+                results.Clear(2000); //Очистка строки если более 2000 символов.
+                results.Result += line; //Добавляю строку в контейнер.
+            }
+       
+            m.ItProcessed = true; //Сообщению ставлю флаг-обработано.
             logger.LogInformation(line);
 
             //Чистка списка-если очень большой.

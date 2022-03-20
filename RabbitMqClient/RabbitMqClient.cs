@@ -5,6 +5,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
+using System.Threading;
 
 namespace RabbitMqCl
 {
@@ -134,7 +135,7 @@ namespace RabbitMqCl
         /// </summary>
         public void Subscribe()
         {
-            var consumer = new EventingBasicConsumer(Channel);
+            EventingBasicConsumer consumer = new EventingBasicConsumer(Channel);
             consumer.Received += (ch, ea) =>
             {
                 byte[] body = ea.Body.ToArray();
@@ -142,7 +143,16 @@ namespace RabbitMqCl
                 Channel.BasicAck(ea.DeliveryTag, false);
             };
 
-            Channel.BasicConsume(QueueName,false,consumer);
+            Channel.BasicConsume(QueueName, false, consumer);
+        }
+
+        /// <summary>
+        /// Метод заглушка заставляющий DI создать реализацию.
+        /// Если используется в ASP net приложении.
+        /// </summary>
+        public int Dummy()
+        {
+            return 15;
         }
 
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SystemA
 {
     /// <summary>
-    /// Интерфейс генерации случайных сообщений.
+    /// Интерфейс генерации и отправки случайных сообщений.
     /// </summary>
     public interface IRandomProducer
     {

@@ -13,13 +13,13 @@ namespace SystemB.Controllers
     public class SBController : ControllerBase
     {
         /// <summary>
-        /// Медлинный сервис,эмулирующий систему B.
+        /// Контейнер, эмулирующий результат работы долгого сервиса. Строка содержит входящие сообщения.
         /// </summary>
-        ReadMessagesService rm;
+        private readonly ISystemResults results;
 
-        public SBController(ReadMessagesService _rm)
+        public SBController(ISystemResults results_)
         {
-            rm = _rm;
+            results = results_;
         }
 
 
@@ -30,7 +30,7 @@ namespace SystemB.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            return Ok(rm.result);
+            return Ok(results.Result);
         }
 
         // GET api/<SBController>/5

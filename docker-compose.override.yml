@@ -21,17 +21,25 @@ services:
       - RABBITMQ_DEFAULT_VHOST=RabitHole
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+
   systema:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "80"
-
-   
+      - "50001:80"
+    depends_on:
+        rabbit:
+         condition: service_healthy
+      
   systemb:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "80"
+      - "50002:80"
+    depends_on:
+      rabbit:
+        condition: service_healthy
+      systema: 
+        condition: service_started
 
 

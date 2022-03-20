@@ -11,6 +11,12 @@ namespace RabbitMqCl
     public interface IRabbitMqClient
     {
         /// <summary>
+        /// Метод заглушка заставляющий DI создать реализацию.
+        /// Если используется в ASP net приложении.
+        /// </summary>
+        int Dummy();
+
+        /// <summary>
         /// Публикация сообщения.
         /// </summary>
         /// <param name="obj"></param>

@@ -27,7 +27,8 @@ namespace SystemA
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IRandomProducer, RandomProducer>(); //Генератор случайных строк.
+            services.AddHostedService<InitQueueService>(); //Сервис создающий очередь.
+            services.AddSingleton<IRandomProducer, RandomProducerImpl>(); //Генератор случайных строк.
             services.AddSingleton<IRabbitMqClient, RabbitMqClient>(); 
             services.AddControllers();
             services.AddSwaggerGen(c =>

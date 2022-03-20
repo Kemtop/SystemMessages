@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace SystemA.Controllers
 {
+    /// <summary>
+    /// Главный контролер API системы A.
+    /// </summary>
     [Route("[controller]")]
     [ApiController]
     public class SAController : ControllerBase
@@ -23,7 +26,7 @@ namespace SystemA.Controllers
 
 
 
-        // GET: api/<SAController>
+        // GET:<SAController>
         [HttpGet]
         public async Task<ActionResult> Get()
         {
